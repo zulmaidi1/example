@@ -1,5 +1,6 @@
 import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
+import { Alert } from 'react-native';
 import {PERMISSIONS, request} from 'react-native-permissions';
 //method was called to get FCM tiken for notification
 export const getFcmToken = async () => {
@@ -8,6 +9,7 @@ export const getFcmToken = async () => {
   await registerAppWithFCM();
   try {
     token = await messaging().getToken();
+    messaging().subscribeToTopic("maintenance")
     console.log('getFcmToken-->', token);
   } catch (error) {
     console.log('getFcmToken Device Token error ', error);
@@ -79,6 +81,7 @@ export const checkApplicationNotificationPermission = async () => {
 export function registerListenerWithFCM() {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('onMessage Received : ', JSON.stringify(remoteMessage));
+    Alert.alert("FCM", JSON.stringify(remoteMessage))
     if (
       remoteMessage?.notification?.title &&
       remoteMessage?.notification?.body
@@ -134,6 +137,7 @@ export function registerListenerWithFCM() {
 async function onDisplayNotification(title, body, data) {
   console.log('onDisplayNotification ', JSON.stringify(data));
 
+  
   // Request permissions (required for iOS)
   await notifee.requestPermission();
   // Create a channel (required for Android)
