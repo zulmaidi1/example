@@ -1,6 +1,10 @@
 import { Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const DetailScreen  = () => {
+    const maintenance = useSelector((state) => state.maintenance)
+    const dispatch = useDispatch();
+
     return (
         <View
             style= {{
@@ -9,7 +13,7 @@ const DetailScreen  = () => {
                 justifyContent: 'center'
             }}
         >
-            <Text>Detail Screen</Text>
+            <Text>{JSON.stringify(maintenance, null, 2)}</Text>
         </View>
     );
 }

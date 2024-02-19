@@ -2,6 +2,9 @@ import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
 import {PERMISSIONS, request} from 'react-native-permissions';
+import { useDispatch } from 'react-redux';
+import { receiveMaintenance } from '../../redux/maintenance_action';
+
 //method was called to get FCM tiken for notification
 export const getFcmToken = async () => {
   let token = null;
@@ -78,13 +81,12 @@ export const checkApplicationNotificationPermission = async () => {
 };
 
 //method was called to listener events from firebase for notification triger
-export function registerListenerWithFCM() {
+export const registerListenerWithFCM = (dispatch) =>  {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('onMessage Received : ', JSON.stringify(remoteMessage));
-    Alert.alert("FCM", JSON.stringify(remoteMessage))
+    dispatch(receiveMaintenance(remoteMessage?.data))
     if (
       remoteMessage?.notification?.title &&
-      remoteMessage?.notification?.body
+      remoteMessage?.notification?.body && remoteMessage?.data?.isShowNotification === "true"
     ) {
       onDisplayNotification(
         remoteMessage.notification?.title,
